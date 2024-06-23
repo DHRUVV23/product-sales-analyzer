@@ -18,32 +18,36 @@ async function extractAllProducts() {
       throw new Error(`Unexpected response content type: ${contentType}. Response: ${text}`);
     }
 
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (error) {
     console.error("Error fetching products:", error);
     return { data: [] }; // Return empty array or handle error case appropriately
   }
 }
 
-export default async function ProductListing() {
-  const allProducts = await extractAllProducts();
-
-  console.log(allProducts);
+export default function ProductListing() {
+  const fetchData = async () => {
+    try {
+      const allProducts = await extractAllProducts();
+      console.log("Fetched products:", allProducts);
+      return allProducts.data || [];
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
 
   return (
     <Table
       tableHeaderText="All Products Overview"
       tableHeaderCells={productTableHeaders}
-      data={
-        allProducts && allProducts.data && allProducts.data.length
-          ? allProducts.data.map((item) => ({
-              ...item,
-              revenue: parseInt(item.price * item.sales),
-              month: monthsMapper[item.month],
-            }))
-          : []
-      }
+      data={fetchData().then(products =>
+        products.map(item => ({
+          ...item,
+          revenue: parseInt(item.price * item.sales),
+          month: monthsMapper[item.month] ?? "Unknown",
+        }))
+      )}
     />
   );
 }

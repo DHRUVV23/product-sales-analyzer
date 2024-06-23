@@ -1,14 +1,14 @@
 import DashboardLayout from "@/components/dashboard";
 
-async function extractAllProducts() {
+async function fetchData(url) {
   try {
-    const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
+    const res = await fetch(url, {
       method: "GET",
       cache: "no-store",
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch products: ${res.status} ${res.statusText}`);
+      throw new Error(`Failed to fetch data: ${res.status} ${res.statusText}`);
     }
 
     const contentType = res.headers.get("content-type");
@@ -16,48 +16,33 @@ async function extractAllProducts() {
       throw new Error(`Unexpected response content type: ${contentType}`);
     }
 
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return { data: [] }; // Return empty array or handle error case appropriately
-  }
-}
-
-async function extractAllVisitors() {
-  try {
-    const res = await fetch(`${process.env.API_URL}/api/visitors/all-visitors`, {
-      method: "GET",
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch visitors: ${res.status} ${res.statusText}`);
-    }
-
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error(`Unexpected response content type: ${contentType}`);
-    }
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching visitors:", error);
+    console.error("Error fetching data:", error);
     return { data: [] }; // Return empty array or handle error case appropriately
   }
 }
 
 export default async function Home() {
-  const [allProducts, allVisitors] = await Promise.all([
-    extractAllProducts(),
-    extractAllVisitors(),
-  ]);
+  try {
+    const [allProducts, allVisitors] = await Promise.all([
+      fetchData(`${process.env.API_URL}/api/product/all-products`),
+      fetchData(`${process.env.API_URL}/api/visitors/all-visitors`),
+    ]);
 
-  return (
-    <DashboardLayout
-      allProducts={allProducts.data}
-      allVisitors={allVisitors.data}
-    />
-  );
+    return (
+      <DashboardLayout
+        allProducts={allProducts.data}
+        allVisitors={allVisitors.data}
+      />
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return (
+      <DashboardLayout
+        allProducts={[]}
+        allVisitors={[]}
+      />
+    );
+  }
 }
