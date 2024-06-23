@@ -3,7 +3,7 @@ import Table from "../Table";
 
 async function extractAllVisitors() {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/visitors/all-visitors`, {
+    const res = await fetch(`${process.env.API_URL}/api/visitors/all-visitors`, {
       method: "GET",
       cache: "no-store",
     });

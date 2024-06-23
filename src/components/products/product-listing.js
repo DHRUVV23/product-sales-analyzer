@@ -3,7 +3,7 @@ import Table from "../Table";
 
 async function extractAllProducts() {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/product/all-products`, {
+    const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
       method: "GET",
       cache: "no-store",
     });
