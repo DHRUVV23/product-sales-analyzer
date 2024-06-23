@@ -30,6 +30,9 @@ export default async function Home() {
       fetchData(`${process.env.API_URL}/api/visitors/all-visitors`),
     ]);
 
+    console.log("Fetched products:", allProducts);
+    console.log("Fetched visitors:", allVisitors);
+
     return (
       <DashboardLayout
         allProducts={allProducts.data}
