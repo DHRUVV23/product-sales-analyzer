@@ -8,7 +8,12 @@ async function extractAllProducts() {
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch products: ${res.status}`);
+      throw new Error(`Failed to fetch products: ${res.status} ${res.statusText}`);
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Unexpected response content type: ${contentType}`);
     }
 
     const data = await res.json();
@@ -27,7 +32,12 @@ async function extractAllVisitors() {
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch visitors: ${res.status}`);
+      throw new Error(`Failed to fetch visitors: ${res.status} ${res.statusText}`);
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Unexpected response content type: ${contentType}`);
     }
 
     const data = await res.json();
@@ -38,12 +48,16 @@ async function extractAllVisitors() {
   }
 }
 
-
 export default async function Home() {
-  const allProducts = await extractAllProducts();
-  const allVisitors = await extractAllVisitors();
+  const [allProducts, allVisitors] = await Promise.all([
+    extractAllProducts(),
+    extractAllVisitors(),
+  ]);
 
   return (
-    <DashboardLayout allProducts={allProducts && allProducts.data} allVisitors={allVisitors && allVisitors.data} />
+    <DashboardLayout
+      allProducts={allProducts.data}
+      allVisitors={allVisitors.data}
+    />
   );
 }

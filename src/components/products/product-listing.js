@@ -14,7 +14,8 @@ async function extractAllProducts() {
 
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("Unexpected response content type");
+      const text = await res.text(); // Read as text
+      throw new Error(`Unexpected response content type: ${contentType}. Response: ${text}`);
     }
 
     const data = await res.json();
