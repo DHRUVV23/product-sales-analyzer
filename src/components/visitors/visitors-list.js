@@ -1,41 +1,33 @@
-import { deviceMapper, monthsMapper, visitorsTableHeaders } from "@/utils/config";
+import { monthsMapper, productTableHeaders } from "@/utils/config";
 import Table from "../Table";
 
-async function extractAllVisitors() {
-  const res = await fetch(`${process.env.API_URL}/visitors/all-visitors`, {
+async function extractAllProducts() {
+  const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
     method: "GET",
     cache: "no-store",
   });
-  
-  if (!res.ok) {
-    throw new Error(`Failed to fetch visitors: ${res.statusText}`);
-  }
 
   const data = await res.json();
+
   return data;
 }
 
-export default async function VisitorsList() {
-  let allVisitors = [];
-  
-  try {
-    const data = await extractAllVisitors();
-    allVisitors = data.data;
-  } catch (error) {
-    console.error('Error fetching visitors:', error);
-  }
-  
+export default async function ProductListing() {
+  const allProducts = await extractAllProducts();
+
+  console.log(allProducts);
+
   return (
     <Table
-      tableHeaderText="All Visitors Overview"
-      tableHeaderCells={visitorsTableHeaders}
+      tableHeaderText="All Products Overview"
+      tableHeaderCells={productTableHeaders}
       data={
-        allVisitors && allVisitors.length
-          ? allVisitors.map(item => ({
-            ...item,
-            month: monthsMapper[item.month],
-            device: deviceMapper[item.device]
-          }))
+        allProducts && allProducts.data && allProducts.data.length
+          ? allProducts.data.map((item) => ({
+              ...item,
+              revenue: parseInt(item.price * item.sales),
+              month: monthsMapper[item.month],
+            }))
           : []
       }
     />

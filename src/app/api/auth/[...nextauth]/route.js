@@ -1,15 +1,16 @@
 import connectToDB from "@/database";
 import User from "@/models/user";
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
-const authOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-    }),
-  ],
+  const authOptions = {
+    providers: [
+      GoogleProvider({
+        clientId:
+          process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+      }),
+    ],
   callbacks: {
     async signIn({ user, account }) {
       if (account.provider === "google") {
@@ -19,7 +20,7 @@ const authOptions = {
           const isUserExists = await User.findOne({ email });
 
           if (!isUserExists) {
-            const res = await fetch(`${process.env.API_URL}`, {
+            const res = await fetch(`${process.env.API_URL}/api/user`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -27,27 +28,20 @@ const authOptions = {
               body: JSON.stringify({ name, email }),
             });
 
-            if (res.ok) {
-              const data = await res.json();
-              if (data.success) {
-                return true;
-              }
-            } else {
-              console.error('Failed to create user:', await res.text());
+            if (res.success) {
+              return user;
             }
-          } else {
-            return true;
           }
         } catch (error) {
-          console.error('Error during sign in:', error);
-          return false;
+          console.log(error);
         }
       }
-      return true;
+
+      return user;
     },
   },
 };
 
-const handler = (req, res) => NextAuth(req, res, authOptions);
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
