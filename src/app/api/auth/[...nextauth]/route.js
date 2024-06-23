@@ -3,14 +3,13 @@ import User from "@/models/user";
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
-  const authOptions = {
-    providers: [
-      GoogleProvider({
-        clientId:
-          process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-      }),
-    ],
+const authOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+    }),
+  ],
   callbacks: {
     async signIn({ user, account }) {
       if (account.provider === "google") {
@@ -28,12 +27,16 @@ import GoogleProvider from "next-auth/providers/google";
               body: JSON.stringify({ name, email }),
             });
 
-            if (res.success) {
+            const data = await res.json();
+
+            if (data.success) {
               return user;
+            } else {
+              console.error("Failed to create user:", data.message);
             }
           }
         } catch (error) {
-          console.log(error);
+          console.error("Error during sign in:", error);
         }
       }
 

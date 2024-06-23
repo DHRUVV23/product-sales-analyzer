@@ -2,15 +2,24 @@ import { monthsMapper, productTableHeaders } from "@/utils/config";
 import Table from "../Table";
 
 async function extractAllProducts() {
-  const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
-    method: "GET",
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
+      method: "GET",
+      cache: "no-store",
+    });
 
-  const data = await res.json();
+    if (!res.ok) {
+      throw new Error(`Failed to fetch products: ${res.status}`);
+    }
 
-  return data;
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return { data: [] }; // Return empty array or handle error case appropriately
+  }
 }
+
 
 export default async function ProductListing() {
   const allProducts = await extractAllProducts();
