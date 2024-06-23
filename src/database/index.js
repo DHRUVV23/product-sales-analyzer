@@ -4,7 +4,7 @@ import mongoose from "mongoose";
   try {
     await mongoose.connect(
       // "mongodb://localhost:27017/jj"
-     process.env.ATLASDB_URL
+     process.env.MONGODB_URI
     );
     console.log("Connected to mongodb");
   } catch (error) {

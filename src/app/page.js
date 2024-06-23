@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/dashboard";
 
 async function extractAllProducts() {
   try {
-    const res = await fetch(`${process.env.API_URL}/api/product/all-products`, {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/product/all-products`, {
       method: "GET",
       cache: "no-store",
     });
@@ -26,7 +26,7 @@ async function extractAllProducts() {
 
 async function extractAllVisitors() {
   try {
-    const res = await fetch(`${process.env.API_URL}/api/visitors/all-visitors`, {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/visitors/all-visitors`, {
       method: "GET",
       cache: "no-store",
     });

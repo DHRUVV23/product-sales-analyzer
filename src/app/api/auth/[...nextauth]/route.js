@@ -6,8 +6,8 @@ import GoogleProvider from "next-auth/providers/google";
 const authOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXTAUTH_SECRET,
     }),
   ],
   callbacks: {
@@ -20,7 +20,7 @@ const authOptions = {
           const isUserExists = await User.findOne({ email });
 
           if (!isUserExists) {
-            const res = await fetch(`${process.env.API_URL}/api/user`, {
+            const res = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
