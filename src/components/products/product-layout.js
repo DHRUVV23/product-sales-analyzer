@@ -20,7 +20,7 @@ export default function ProductLayout({ children }) {
 
   const router = useRouter();
 
-  console.log(formData);
+  // console.log(formData);
 
   async function handleAddProduct() {
     const res = await fetch("/api/product/add-product", {

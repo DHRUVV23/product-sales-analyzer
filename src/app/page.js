@@ -1,51 +1,35 @@
 import DashboardLayout from "@/components/dashboard";
 
-async function fetchData(url) {
-  try {
-    const res = await fetch(url, {
-      method: "GET",
-      cache: "no-store",
-    });
+//get all products
+async function extractAllProducts() {
+  const res = await fetch("http://localhost:3000/api/product/all-products", {
+    method: "GET",
+    cache: "no-store",
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch data: ${res.status} ${res.statusText}`);
-    }
+  const data = await res.json();
 
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error(`Unexpected response content type: ${contentType}`);
-    }
+  return data;
+}
 
-    return await res.json();
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return { data: [] }; // Return empty array or handle error case appropriately
-  }
+//get all visitors list
+
+async function extractAllVisitors() {
+  const res = await fetch("http://localhost:3000/api/visitors/all-visitors", {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  const data = await res.json();
+
+  return data;
 }
 
 export default async function Home() {
-  try {
-    const [allProducts, allVisitors] = await Promise.all([
-      fetchData(`${process.env.API_URL}/api/product/all-products`),
-      fetchData(`${process.env.API_URL}/api/visitors/all-visitors`),
-    ]);
+  const allProducts = await extractAllProducts();
+  const allVisitors = await extractAllVisitors();
 
-    console.log("Fetched products:", allProducts);
-    console.log("Fetched visitors:", allVisitors);
-
-    return (
-      <DashboardLayout
-        allProducts={allProducts.data}
-        allVisitors={allVisitors.data}
-      />
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return (
-      <DashboardLayout
-        allProducts={[]}
-        allVisitors={[]}
-      />
-    );
-  }
+  return (
+    <DashboardLayout allProducts={allProducts && allProducts.data} allVisitors={allVisitors && allVisitors.data} />
+  );
 }

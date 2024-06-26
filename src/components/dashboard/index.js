@@ -7,7 +7,7 @@ import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { BsFillPersonCheckFill } from "react-icons/bs";
 import YearlyAnalyticsChart from "../YearlyAnalyticsChart";
 import VisitorsAnalytics from "../VisitorsAnalytics";
-import DeviceAnalytics from "../DeviceAnalytics";
+
 
 export default function DashboardLayout({ allVisitors, allProducts }) {
   console.log(allProducts, allVisitors);
